@@ -8,6 +8,23 @@ Due to copyright reasons, we do not provide RGB image data of FineDiving dataset
 BaiduNetDisk：FineDiving_RGBPose_annotation.pkl
 website: https://pan.baidu.com/s/17vF3AGFzs7BJzoY80IuItA?pwd=dfps code: dfps
 
+| Field Name    | Type   | Description                          | Field Name             | Type  | Description                         |
+| ------------- | ------ | ------------------------------------ | ---------------------- | ----- | ----------------------------------- |
+| `action_type` | string | Description of the action type.      | `sub-action_types`     | dict  | Description of the sub-action type. |
+| `label`       | int    | action type in int format.           | `judge_scores`         | list  | Judge scores.                       |
+| `dive_score`  | float  | Diving score of the action instance. | `frames_labels`        | array | Step-level labels of the frames.    |
+| `difficulty`  | float  | Difficulty of the action type.       | `steps_transit_frames` | array | Frame index of step transitions.    |
+| `img_shape`   | tuple  | Length and width of the picture.     | `total_frames`         | int   | Frames of original video(images).   |
+| `gtboxes`     | array  | Human bounding box coordinates.      | `keypoint`             | array   | Human skeleton data extracted through HRNet.  |
+| `keypoint_score`  | array  | Human bounding box coordinates. 
+
+Note: 
+- The shape of gtboxes is [T, N, C]. T represents the number of frames, N represents the number of people, C represents the channel, and C defaults to 4, corresponding to (x1, y1, x2, y2), that is, the coordinates of the upper left and lower right corners of the bounding box. 
+- The shape of the keypoint is [M, T, V, C]. M represents the number of people, T represents the time, V represents the joint point, C represents the channel, and C is 2 by default, which corresponds to the coordinates of the key point. 
+- The shape of keypoint_score is [M, T, V]. M represents the number of people, T represents the time, and V represents the joint point. Indicates the confidence socre of key points estimated by HRNet.
+
+
+
 ## Code for our work
 ### Requirement
 
