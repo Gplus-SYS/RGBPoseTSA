@@ -54,61 +54,34 @@ class _NonLocalBlockND(nn.Module):
             self.g = nn.Sequential(self.g, max_pool_layer)
             self.phi = max_pool_layer
 
-    # def forward(self, x):
-    #     '''
-    #     :param x: (b, c, t, h, w)
-    #     :return:
-    #     '''
-    #
-    #     batch_size = x.size(0)
-    #     g_x = self.g(x).view(batch_size, self.inter_channels, -1)
-    #     g_x = g_x.permute(0, 2, 1)
-    #     theta_x = x.view(batch_size, self.in_channels, -1)
-    #     theta_x = theta_x.permute(0, 2, 1)
-    #     if self.sub_sample:
-    #         phi_x = self.phi(x).view(batch_size, self.in_channels, -1)
-    #     else:
-    #         phi_x = x.view(batch_size, self.in_channels, -1)
-    #
-    #     f = torch.matmul(theta_x, phi_x)
-    #     f_div_C = F.softmax(f, dim=-1)
-    #
-    #     y = torch.matmul(f_div_C, g_x)
-    #     y = y.permute(0, 2, 1).contiguous()
-    #     y = y.view(batch_size, self.inter_channels, *x.size()[2:])
-    #     W_y = self.W(y)
-    #     z = W_y + x
-    #
-    #     return z
-    
-    def forward(self, v, q):
+    def forward(self, x):
         '''
-        :param v, q: (b, c, t, h, w)
+        :param x: (b, c, t, h, w)
         :return:
         '''
-        # V
-        batch_size = v.size(0)
-        g_v = self.g(v).view(batch_size, self.inter_channels, -1)
-        g_v = g_v.permute(0, 2, 1)
-        # Q
-        theta_q = q.view(batch_size, self.in_channels, -1)
-        theta_q = theta_q.permute(0, 2, 1)
-        # K
+    
+        batch_size = x.size(0)
+        g_x = self.g(x).view(batch_size, self.inter_channels, -1)
+        g_x = g_x.permute(0, 2, 1)
+        theta_x = x.view(batch_size, self.in_channels, -1)
+        theta_x = theta_x.permute(0, 2, 1)
         if self.sub_sample:
-            phi_v = self.phi(v).view(batch_size, self.in_channels, -1)
+            phi_x = self.phi(x).view(batch_size, self.in_channels, -1)
         else:
-            phi_v = v.view(batch_size, self.in_channels, -1)
-
-        f = torch.matmul(theta_q, phi_v)
+            phi_x = x.view(batch_size, self.in_channels, -1)
+    
+        f = torch.matmul(theta_x, phi_x)
         f_div_C = F.softmax(f, dim=-1)
-
-        y = torch.matmul(f_div_C, g_v)
+    
+        y = torch.matmul(f_div_C, g_x)
         y = y.permute(0, 2, 1).contiguous()
-        y = y.view(batch_size, self.inter_channels, *v.size()[2:])
+        y = y.view(batch_size, self.inter_channels, *x.size()[2:])
         W_y = self.W(y)
-        z = W_y + q
-
+        z = W_y + x
+    
         return z
+    
+    
 
 
 class NONLocalBlock1D(_NonLocalBlockND):
