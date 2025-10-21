@@ -24,7 +24,7 @@ model = dict(
 
 cls_only = False
 ps = True
-
+with_cls = False
 
 dataset_type = 'PoseDataset'
 # dataset
